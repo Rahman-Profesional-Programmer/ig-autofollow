@@ -1,0 +1,14 @@
+{
+  "manifest_version": 3,
+  "name": "Instagram Auto Follower",
+  "version": "1.0",
+  "description": "Ekstensi otomatis follow Instagram dengan jeda random dan target.",
+  "permissions": [
+    "activeTab",
+    "scripting"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": "icon.png"
+  }
+}

@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Auto Follow Instagram</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      width: 250px;
+      padding: 15px;
+      margin: 0;
+      background-color: #f9f9f9;
+    }
+    h3 {
+      font-size: 14px;
+      margin-top: 0;
+      color: #262626;
+      text-align: center;
+    }
+    .input-group {
+      margin-bottom: 12px;
+    }
+    label {
+      display: block;
+      font-size: 12px;
+      font-weight: bold;
+      margin-bottom: 4px;
+      color: #555;
+    }
+    input {
+      width: 100%;
+      padding: 6px;
+      box-sizing: border-box;
+      border: 1px solid #dbdbdb;
+      border-radius: 4px;
+      font-size: 12px;
+    }
+    button {
+      width: 100%;
+      background-color: #0095f6;
+      color: white;
+      border: none;
+      padding: 8px;
+      border-radius: 4px;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 12px;
+    }
+    button:hover {
+      background-color: #1877f2;
+    }
+    #status {
+      margin-top: 10px;
+      font-size: 11px;
+      text-align: center;
+      color: #666;
+    }
+    #limitsBtn {
+      margin-top: 8px;
+      background-color: #555;
+    }
+    #limitsBtn:hover {
+      background-color: #333;
+    }
+    #limitsDialog {
+      width: min(320px, calc(100vw - 48px));
+      max-height: calc(100vh - 40px);
+      padding: 16px;
+      border: none;
+      border-radius: 8px;
+      box-sizing: border-box;
+      color: #262626;
+      overflow-y: auto;
+    }
+    #limitsDialog::backdrop {
+      background: rgba(0, 0, 0, 0.45);
+    }
+    #limitsDialog h3 {
+      margin-bottom: 12px;
+    }
+    #limitsDialog ul {
+      padding-left: 20px;
+      margin: 0;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+    #limitsDialog li {
+      margin-bottom: 8px;
+    }
+    #limitsDialog p {
+      font-size: 11px;
+      line-height: 1.45;
+      color: #666;
+    }
+    #closeLimitsBtn {
+      margin-top: 8px;
+    }
+  </style>
+</head>
+<body>
+  <h3>Auto Follow IG</h3>
+  
+  <div class="input-group">
+    <label for="targetFollow">Target Total Follow:</label>
+    <input type="number" id="targetFollow" value="50" min="1">
+  </div>
+
+  <div class="input-group">
+    <label for="minDelay">Jeda Min (detik):</label>
+    <input type="number" id="minDelay" value="5" min="1">
+  </div>
+
+  <div class="input-group">
+    <label for="maxDelay">Jeda Max (detik):</label>
+    <input type="number" id="maxDelay" value="10" min="1">
+  </div>
+
+  <button id="startBtn">Mulai Follow</button>
+  <button id="limitsBtn" type="button">Lihat Batas Follow</button>
+  <div id="status">Status: Standby</div>
+
+  <dialog id="limitsDialog" aria-labelledby="limitsTitle">
+    <h3 id="limitsTitle">Informasi Batas Follow</h3>
+    <ul>
+      <li>Akun baru (kurang dari 1 bulan): 20–50 akun per hari.</li>
+      <li>Akun berusia kurang dari 6 bulan: 50–100 akun per hari (maksimal 150).</li>
+      <li>Akun mapan (di atas 6 bulan / aktif): 100–150 akun per hari (batas maksimum mutlak sekitar 200 akun per hari).</li>
+      <li>Batasan per jam: sekitar 5–10 kali per jam untuk akun baru, dan maksimal 15–20 kali per jam untuk akun lama.</li>
+      <li>Batas total akun yang bisa diikuti: maksimal 7.500 akun seumur hidup akun tersebut.</li>
+    </ul>
+    <p>Angka ini hanya perkiraan, bukan batas resmi atau jaminan aman. Batas Instagram dapat berubah; selalu patuhi kebijakan Instagram dan hentikan aktivitas jika muncul peringatan.</p>
+    <button id="closeLimitsBtn" type="button">Tutup</button>
+  </dialog>
+
+  <script src="popup.js"></script>
+</body>
+</html>
