@@ -1,135 +1,307 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
   <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Auto Follow Instagram</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      width: 250px;
-      padding: 15px;
-      margin: 0;
-      background-color: #f9f9f9;
+    * {
+      box-sizing: border-box;
     }
-    h3 {
-      font-size: 14px;
-      margin-top: 0;
-      color: #262626;
+    body {
+      /* Samakan lebar popup dengan panel unfollow. */
+      width: 370px;
+      max-height: 620px;
+      overflow-y: auto;
+      margin: 0;
+      padding: 12px;
+      background: #fff;
+      color: #17243b;
+      font: 12px Arial, sans-serif;
+    }
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+    h1 {
+      margin: 0;
+      font-size: 15px;
+      line-height: 1.25;
+    }
+    .language-switch {
+      display: flex;
+      gap: 4px;
+      flex: 0 0 auto;
+    }
+    .language-switch button {
+      width: auto;
+      padding: 4px 8px;
+      border: 1px solid #d5d9e2;
+      background: #fff;
+      color: #24334d;
+      font-size: 10px;
+      font-weight: normal;
+    }
+    .language-switch button[aria-pressed="true"] {
+      border-color: #7044c5;
+      background: #7044c5;
+      color: #fff;
+    }
+    .notice {
+      margin-bottom: 10px;
+      padding: 9px 10px;
+      border-radius: 7px;
+      background: #fff2d6;
+      color: #74420a;
+      font-size: 11px;
+      line-height: 1.4;
+    }
+    .notice p {
+      margin: 0;
+    }
+    .notice p + p {
+      margin-top: 5px;
+      font-size: 10px;
+    }
+    .settings {
+      padding: 2px 10px;
+      border: 1px solid #dfe3ea;
+      border-radius: 8px;
+    }
+    .setting-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      min-height: 40px;
+      border-bottom: 1px solid #e8ebf0;
+    }
+    .setting-row:last-child {
+      border-bottom: 0;
+    }
+    .setting-row > label,
+    .row-label {
+      flex: 1 1 auto;
+      min-width: 0;
+      color: #263d63;
+      line-height: 1.35;
+    }
+    .control,
+    .range-control {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex: 0 0 auto;
+    }
+    input[type="number"] {
+      width: 62px;
+      height: 28px;
+      padding: 4px 6px;
+      border: 1px solid #d5d9e2;
+      border-radius: 6px;
+      background: #f8f9fb;
+      color: #17243b;
+      font: inherit;
+    }
+    #targetFollow {
+      width: 68px;
+    }
+    .range-control input {
+      width: 58px;
+    }
+    .suffix,
+    .range-separator {
+      color: #58667c;
+      white-space: nowrap;
+    }
+    .status-info {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 6px 10px;
+      margin: 10px 0;
+      color: #52617a;
+      line-height: 1.35;
+    }
+    .status-info strong {
+      color: #17243b;
+      font-variant-numeric: tabular-nums;
+      text-align: right;
+    }
+    #progress {
+      grid-column: 1 / -1;
+      color: #68758a;
+      text-align: right;
+    }
+    #status {
+      min-height: 18px;
+      margin: 7px 0 8px;
+      color: #52617a;
       text-align: center;
     }
-    .input-group {
-      margin-bottom: 12px;
-    }
-    label {
-      display: block;
-      font-size: 12px;
-      font-weight: bold;
-      margin-bottom: 4px;
-      color: #555;
-    }
-    input {
-      width: 100%;
-      padding: 6px;
-      box-sizing: border-box;
-      border: 1px solid #dbdbdb;
-      border-radius: 4px;
-      font-size: 12px;
+    .actions {
+      display: flex;
+      gap: 8px;
     }
     button {
       width: 100%;
-      background-color: #0095f6;
-      color: white;
-      border: none;
-      padding: 8px;
-      border-radius: 4px;
-      font-weight: bold;
+      padding: 8px 10px;
+      border: 0;
+      border-radius: 7px;
+      background: #7044c5;
+      color: #fff;
+      font: bold 12px Arial, sans-serif;
       cursor: pointer;
-      font-size: 12px;
     }
-    button:hover {
-      background-color: #1877f2;
+    button:hover:not(:disabled) {
+      filter: brightness(0.94);
     }
-    #status {
-      margin-top: 10px;
-      font-size: 11px;
-      text-align: center;
-      color: #666;
+    button:focus-visible,
+    input:focus-visible {
+      outline: 2px solid #38217a;
+      outline-offset: 2px;
     }
-    #limitsBtn {
+    button:disabled {
+      cursor: default;
+      opacity: 0.55;
+    }
+    #stopBtn {
+      background: #e98f91;
+    }
+    .limits-link {
       margin-top: 8px;
-      background-color: #555;
+      padding: 5px;
+      background: transparent;
+      color: #5d3ba4;
+      font-size: 11px;
+      font-weight: normal;
     }
-    #limitsBtn:hover {
-      background-color: #333;
-    }
-    #limitsDialog {
-      width: min(320px, calc(100vw - 48px));
-      max-height: calc(100vh - 40px);
+    dialog {
+      width: min(340px, calc(100vw - 32px));
+      max-height: calc(100vh - 32px);
       padding: 16px;
-      border: none;
-      border-radius: 8px;
-      box-sizing: border-box;
-      color: #262626;
+      border: 1px solid #dfe3ea;
+      border-radius: 9px;
+      color: #17243b;
       overflow-y: auto;
     }
-    #limitsDialog::backdrop {
-      background: rgba(0, 0, 0, 0.45);
+    dialog::backdrop {
+      background: rgba(15, 23, 42, 0.45);
     }
-    #limitsDialog h3 {
-      margin-bottom: 12px;
+    dialog h2 {
+      margin: 0 0 12px;
+      font-size: 15px;
+      text-align: center;
     }
-    #limitsDialog ul {
-      padding-left: 20px;
+    dialog ul {
       margin: 0;
+      padding-left: 19px;
       font-size: 12px;
       line-height: 1.5;
     }
-    #limitsDialog li {
+    dialog li {
       margin-bottom: 8px;
     }
-    #limitsDialog p {
+    dialog p {
+      color: #68758a;
       font-size: 11px;
       line-height: 1.45;
-      color: #666;
     }
-    #closeLimitsBtn {
-      margin-top: 8px;
+    @media (max-width: 360px) {
+      /* Kecilkan input pada tampilan sempit tanpa mengubah lebar popup. */
+      .setting-row {
+        gap: 5px;
+      }
+      input[type="number"] {
+        width: 54px;
+      }
+      #targetFollow {
+        width: 62px;
+      }
     }
   </style>
 </head>
 <body>
-  <h3>Auto Follow IG</h3>
-  
-  <div class="input-group">
-    <label for="targetFollow">Target Total Follow:</label>
-    <input type="number" id="targetFollow" value="50" min="1">
-  </div>
+  <header class="header">
+    <h1 data-i18n="title">Auto Follow IG oleh Indah Amuntai</h1>
+    <div class="language-switch" role="group" aria-label="Language">
+      <button id="idLangBtn" type="button" aria-pressed="true">ID</button>
+      <button id="enLangBtn" type="button" aria-pressed="false">EN</button>
+    </div>
+  </header>
 
-  <div class="input-group">
-    <label for="minDelay">Jeda Min (detik):</label>
-    <input type="number" id="minDelay" value="5" min="1">
-  </div>
+  <section class="notice" aria-live="polite">
+    <p data-i18n="warningMain">Gunakan target yang wajar untuk akun Anda. Target 200 follow per hari bukan jaminan aman.</p>
+    <p data-i18n="warningSub">Batas Instagram dapat berubah; hentikan aktivitas jika muncul peringatan.</p>
+  </section>
 
-  <div class="input-group">
-    <label for="maxDelay">Jeda Max (detik):</label>
-    <input type="number" id="maxDelay" value="10" min="1">
-  </div>
+  <section class="settings" aria-label="Follow settings">
+    <div class="setting-row">
+      <label for="targetFollow" data-i18n="targetTotal">Target total follow</label>
+      <div class="control">
+        <input type="number" id="targetFollow" value="50" min="1" max="200" inputmode="numeric">
+        <span class="suffix" data-i18n="accounts">akun</span>
+      </div>
+    </div>
+    <div class="setting-row">
+      <span class="row-label" data-i18n="delayRange">Rentang jeda (detik)</span>
+      <div class="range-control">
+        <input type="number" id="minDelay" value="10" min="1" max="3600" aria-label="Minimum delay in seconds" inputmode="numeric">
+        <span class="range-separator">–</span>
+        <input type="number" id="maxDelay" value="15" min="1" max="3600" aria-label="Maximum delay in seconds" inputmode="numeric">
+      </div>
+    </div>
+    <div class="setting-row">
+      <label for="batchCount" data-i18n="batchEvery">Setiap</label>
+      <div class="control">
+        <input type="number" id="batchCount" value="9" min="1" max="200" inputmode="numeric">
+        <span class="suffix" data-i18n="actionsLabel">aksi follow</span>
+      </div>
+    </div>
+    <div class="setting-row">
+      <label for="restMinutes" data-i18n="restFor">Istirahat selama</label>
+      <div class="control">
+        <input type="number" id="restMinutes" value="10" min="1" max="1440" inputmode="numeric">
+        <span class="suffix" data-i18n="minutes">menit</span>
+      </div>
+    </div>
+    <div class="setting-row">
+      <label for="failurePause" data-i18n="failurePause">Jika aksi ditolak/error, jeda sebelum melanjutkan</label>
+      <div class="control">
+        <input type="number" id="failurePause" value="30" min="1" max="1440" inputmode="numeric">
+        <span class="suffix" data-i18n="minutes">menit</span>
+      </div>
+    </div>
+  </section>
 
-  <button id="startBtn">Mulai Follow</button>
-  <button id="limitsBtn" type="button">Lihat Batas Follow</button>
-  <div id="status">Status: Standby</div>
+  <section class="status-info" aria-live="polite">
+    <span data-i18n="nextAction">Aksi berikutnya dalam</span>
+    <strong id="nextAction">--:--</strong>
+    <span data-i18n="runningFor">Aplikasi berjalan selama</span>
+    <strong id="elapsed">00:00:00</strong>
+    <span id="progress">0 / 50</span>
+  </section>
+
+  <div id="status" role="status" data-status-key="ready">Status: Siap</div>
+  <div class="actions">
+    <button id="startBtn" type="button" data-i18n="start">Mulai</button>
+    <button id="stopBtn" type="button" data-i18n="stop" disabled>Stop</button>
+  </div>
+  <button id="limitsBtn" class="limits-link" type="button" data-i18n="limitsButton">Lihat informasi batas</button>
 
   <dialog id="limitsDialog" aria-labelledby="limitsTitle">
-    <h3 id="limitsTitle">Informasi Batas Follow</h3>
+    <h2 id="limitsTitle" data-i18n="limitsTitle">Informasi batas follow</h2>
     <ul>
-      <li>Akun baru (kurang dari 1 bulan): 20–50 akun per hari.</li>
-      <li>Akun berusia kurang dari 6 bulan: 50–100 akun per hari (maksimal 150).</li>
-      <li>Akun mapan (di atas 6 bulan / aktif): 100–150 akun per hari (batas maksimum mutlak sekitar 200 akun per hari).</li>
-      <li>Batasan per jam: sekitar 5–10 kali per jam untuk akun baru, dan maksimal 15–20 kali per jam untuk akun lama.</li>
-      <li>Batas total akun yang bisa diikuti: maksimal 7.500 akun seumur hidup akun tersebut.</li>
+      <li data-i18n="limitNew">Akun baru (kurang dari 1 bulan): 20–50 akun per hari.</li>
+      <li data-i18n="limitYoung">Akun berusia kurang dari 6 bulan: 50–100 akun per hari (maksimal 150).</li>
+      <li data-i18n="limitEstablished">Akun mapan (di atas 6 bulan / aktif): 100–150 akun per hari (batas maksimum mutlak sekitar 200 akun per hari).</li>
+      <li data-i18n="limitHourly">Batasan per jam: sekitar 5–10 kali per jam untuk akun baru, dan maksimal 15–20 kali per jam untuk akun lama.</li>
+      <li data-i18n="limitLifetime">Batas total akun yang bisa diikuti: maksimal 7.500 akun seumur hidup akun tersebut.</li>
     </ul>
-    <p>Angka ini hanya perkiraan, bukan batas resmi atau jaminan aman. Batas Instagram dapat berubah; selalu patuhi kebijakan Instagram dan hentikan aktivitas jika muncul peringatan.</p>
-    <button id="closeLimitsBtn" type="button">Tutup</button>
+    <p data-i18n="limitsDisclaimer">Angka ini hanya perkiraan, bukan batas resmi atau jaminan aman. Batas Instagram dapat berubah; selalu patuhi kebijakan Instagram dan hentikan aktivitas jika muncul peringatan.</p>
+    <button id="closeLimitsBtn" type="button" data-i18n="close">Tutup</button>
   </dialog>
 
   <script src="popup.js"></script>
